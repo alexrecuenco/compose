@@ -112,19 +112,31 @@ def serialize_config(config, image_digests=None, escape_dollar=True):
 
 
 def serialize_ns_time_value(value):
+    """
+    Given a time in nanoseconds, return it formatted in the highest units
+    that doesn't require decimals to represent the string.
+
+
+    Arguments:
+        value {Union[float, int]} -- Time in nanoseconds.
+
+    Returns:
+        str -- Formatted string (ns, us, ms, s, m or h as units).
+    """
+    value = int(value)
     result = (value, 'ns')
     table = [
-        (1000., 'us'),
-        (1000., 'ms'),
-        (1000., 's'),
-        (60., 'm'),
-        (60., 'h')
+        (1000, 'us'),
+        (1000, 'ms'),
+        (1000, 's'),
+        (60, 'm'),
+        (60, 'h')
     ]
-    for stage in table:
-        tmp = value / stage[0]
-        if tmp == int(value / stage[0]):
+    for factor, unit in table:
+        tmp, reminder = divmod(value, factor)
+        if reminder == 0:
             value = tmp
-            result = (int(value), stage[1])
+            result = (value, unit)
         else:
             break
     return '{0}{1}'.format(*result)

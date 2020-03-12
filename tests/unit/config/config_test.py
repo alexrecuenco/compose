@@ -5230,16 +5230,24 @@ class SerializeTest(unittest.TestCase):
     def test_serialize_time(self):
         data = {
             9: '9ns',
-            9000: '9us',
-            9000000: '9ms',
-            90000000: '90ms',
-            900000000: '900ms',
+            9*1000: '9us',
+            9*1000*1000: '9ms',
+            90*1000*1000: '90ms',
+            900*1000*1000: '900ms',
             999999999: '999999999ns',
-            1000000000: '1s',
-            60000000000: '1m',
+            1*1000*1000*1000: '1s',
+            60*1*1000*1000*1000: '1m',
             60000000001: '60000000001ns',
-            9000000000000: '150m',
-            90000000000000: '25h',
+            150*60*1000*1000*1000: '150m',
+            25*60*60*1000*1000*1000: '25h',
+            1040189672610790977: '1040189672610790977ns',
+            1100.22222: '1100ns',
+            # Note on 'float(18446746272732807168)',
+            # it is the floating point number '0b1011111100000000000000000000001'.
+            # We don't expect the result to be exact for float(N) for all N.
+            # This example asserts the precision
+            # is the maximum precision provided by floating point numbers.
+            float(4612251167404064768): '4612251167404064768ns'
         }
 
         for k, v in data.items():
